@@ -6,12 +6,23 @@ import random
 class TestRoutes(object):
     """Run py.test on this"""
 
+    curl = []
     def setup(self):
         self.HOST = "http://localhost:8080/message/route"
             
     def _send(self):
         r = requests.post(self.HOST, data=json.dumps(self.payload))
+        self.curl.append("""
+curl -X POST -H "Content-Type: application/json" -d '%s' %s 
+""" % (json.dumps(self.payload), self.HOST))
         return r
+
+    def teardown_class(self):
+        print self.curl
+        with open("curl.txt", "w") as f:
+            f.write('\n'.join(self.curl))
+
+
             
 
     def _assert_error(self, r, errnum, raised_message=None):

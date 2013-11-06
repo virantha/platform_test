@@ -36,6 +36,21 @@ Go source files:
 - [Error utility function](https://github.com/virantha/platform_test/blob/master/go/src/github.com/virantha/errors.go)
 - [A unit test for the main computation](https://github.com/virantha/platform_test/blob/master/go/src/github.com/virantha/server_test.go)
 
+Python test script for automating the testing of the REST API: (this is in lieu
+of curl scripts. Use py.test to execute it
+against the server).  This script tests to make sure proper errors are returned in 
+case of mal-formed input, as well as ensuring that several test cases are 
+properly processed.  It uses the third-party Requests library.
+
+- [test_routes.py](https://github.com/virantha/platform_test/blob/master/test/test_routes.py)
+  
+    - Test malformed requests
+    - Test too many recipients
+    - Generates pseudo-random telephone numbers and tests the following recipient counts:
+        - 2
+        - 17
+        - 51
+
 
 Answers to questions
 --------------------
