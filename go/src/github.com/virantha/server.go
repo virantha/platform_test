@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"sort"
     "errors"
+    "regexp"
 )
 
 // Some globals that really should be in a configuration file or member data
@@ -21,6 +22,8 @@ var IPs map[int]string = map[int]string{
 }
 // Calculate the reverse sorted keys of the route categories
 var Categories []int = reverse_sort_keys(IPs)
+// Compiled regex to match a 10-digit phone number
+var PhoneRe *regexp.Regexp = regexp.MustCompile(`\d{10}`)
 
 type MessageJSON struct {
 	Message    string   `json:"message"`
@@ -80,6 +83,14 @@ func GetMessageAllocation(message string, recipients []string) (error, *RoutesJS
         return err, nil
     }
 
+    for _,recipient := range recipients {
+        // Check that recipient is a valid phone number
+        if !PhoneRe.MatchString(recipient) {
+            err := errors.New(fmt.Sprintf("Invalid phone number %s", recipient))
+            return err, nil
+        }
+    }
+
 	// Now, take the allocation and split up the recipients into multiple slices
 	// First, we need to get a reverse sorted list of the categories, so that we allocate
 	// the recipients in the most efficient (least number of requests) manner.
@@ -125,6 +136,7 @@ func MessageRouter(w http.ResponseWriter, r *http.Request) {
 	message := messageJSON.Message
 	recipients := messageJSON.Recipients
 
+    // TODO: check if unique phone numbers
 	// Call the allocation routine that returns a RoutesJSON object
 	var routesJSON *RoutesJSON
 	err, routesJSON = GetMessageAllocation(message, recipients)
