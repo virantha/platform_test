@@ -31,4 +31,4 @@ func Test_divide(t *testing.T) {
             t.Error(fmt.Sprintf("Dividing %d expected %v, got %v", input, expected,result))
         }
     }
-
+}
