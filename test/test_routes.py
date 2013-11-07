@@ -8,7 +8,7 @@ class TestRoutes(object):
 
     curl = []
     def setup(self):
-        self.HOST = "http://localhost:8080/message/route"
+        self.HOST = "http://techvectors.com:8080/message/route"
             
     def _send(self):
         r = requests.post(self.HOST, data=json.dumps(self.payload))

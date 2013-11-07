@@ -7,8 +7,8 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"sort"
-    "errors"
-    "regexp"
+	"errors"
+	"regexp"
 )
 
 // Some globals that really should be in a configuration file or member data
@@ -78,18 +78,18 @@ func reverse_sort_keys(categories map[int]string) (keys []int) {
 // Create the JSON return object with the routes
 func GetMessageAllocation(message string, recipients []string) (error, *RoutesJSON) {
 
-    if len(recipients) > MAX_RECIPIENTS {
-        err := errors.New(fmt.Sprintf("Got %d recipients, but maximum allowed is %d", len(recipients), MAX_RECIPIENTS))
-        return err, nil
-    }
+	if len(recipients) > MAX_RECIPIENTS {
+		err := errors.New(fmt.Sprintf("Got %d recipients, but maximum allowed is %d", len(recipients), MAX_RECIPIENTS))
+		return err, nil
+	}
 
-    for _,recipient := range recipients {
-        // Check that recipient is a valid phone number
-        if !PhoneRe.MatchString(recipient) {
-            err := errors.New(fmt.Sprintf("Invalid phone number %s", recipient))
-            return err, nil
-        }
-    }
+	for _, recipient := range recipients {
+		// Check that recipient is a valid phone number
+		if !PhoneRe.MatchString(recipient) {
+			err := errors.New(fmt.Sprintf("Invalid phone number %s", recipient))
+			return err, nil
+		}
+	}
 
 	// Now, take the allocation and split up the recipients into multiple slices
 	// First, we need to get a reverse sorted list of the categories, so that we allocate
@@ -104,8 +104,8 @@ func GetMessageAllocation(message string, recipients []string) (error, *RoutesJS
 		// For each bin, slice up the recipients
 		// i will keep track of where we are in the recipients
 		for bin_index := 0; bin_index < bin_count; bin_index++ {
-			routeJSON := RouteJSON {
-                IP: fmt.Sprintf("%s%d", IPs[bin], bin_index+1),
+			routeJSON := RouteJSON{
+				IP:         fmt.Sprintf("%s%d", IPs[bin], bin_index+1),
 				Recipients: recipients[i : i+bin],
 			}
 			routesJSON.Routes = append(routesJSON.Routes, routeJSON)
@@ -136,7 +136,7 @@ func MessageRouter(w http.ResponseWriter, r *http.Request) {
 	message := messageJSON.Message
 	recipients := messageJSON.Recipients
 
-    // TODO: check if unique phone numbers
+	// TODO: check if unique phone numbers
 	// Call the allocation routine that returns a RoutesJSON object
 	var routesJSON *RoutesJSON
 	err, routesJSON = GetMessageAllocation(message, recipients)
