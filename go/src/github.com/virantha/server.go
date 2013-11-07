@@ -25,21 +25,29 @@ var Categories []int = reverse_sort_keys(IPs)
 // Compiled regex to match a 10-digit phone number
 var PhoneRe *regexp.Regexp = regexp.MustCompile(`\d{10}`)
 
+// The incoming request
 type MessageJSON struct {
 	Message    string   `json:"message"`
 	Recipients []string `json:recipients"`
 }
 
+// A single route for the response
 type RouteJSON struct {
 	IP         string   `json:"ip"`
 	Recipients []string `json:"recipients"`
 }
 
+// The complete response with the message and array of routes
 type RoutesJSON struct {
 	Message string      `json:"message"`
 	Routes  []RouteJSON `json:"routes"`
 }
 
+
+// This function divides a number into the given throughput categories.
+// It returns a hash mapping each throughput category to the number of
+// such categories required to satisfy sendint the total number in the
+// least number of responses
 func divide(msg_length int, categories []int) (msgs map[int]int) {
 	var remainder int
 	msgs = make(map[int]int) // Hash of category(msgs/request) to number of such routes
@@ -115,6 +123,9 @@ func GetMessageAllocation(message string, recipients []string) (error, *RoutesJS
 	return nil, &routesJSON
 }
 
+// The message/route POST endpoint handler.  This function
+// decodes the incoming message, calls the allocation routine,
+// and sets the JSON response.
 func MessageRouter(w http.ResponseWriter, r *http.Request) {
 	var messageJSON MessageJSON
 
@@ -158,6 +169,8 @@ func MessageRouter(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Main entry point that sets a single endpoint and starts the
+// server
 func main() {
 
 	// Setup the routes
